@@ -38,10 +38,11 @@
     #   loop: "{{ ec2_output.results }}"
 
     - name: create route53 record
-  community.aws.route53:
-    state: present
-    zone: "example.com"
-    record: "mongodb.example.com"
-    type: A
-    ttl: 300
-    value: "{{ ec2_instance.public_ip }}"
+      community.aws.route53:
+        state: present
+        zone_id: "{{ zone_id }}"
+        record: "{{ item.item }}.{{ domain_name }}"
+        type: A
+        ttl: 300
+        value: "{{ item.instances[0].public_ip_address }}"
+      loop: "{{ ec2_output.results }}"
