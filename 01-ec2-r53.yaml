@@ -8,7 +8,8 @@
     zone_id: "Z09617511B5QP2P5E3AO" # replace with your id
     domain_name: "madhan66.store"
     instances:
-      - mongodb 
+      - mongodb
+      - radis
 
   tasks:
      
@@ -37,12 +38,12 @@
     #      msg: "{{ item.instances[0].private_ip_address }}"
     #   loop: "{{ ec2_output.results }}"
 
-    - name: create route53 record
-      community.aws.route53:
-       state: present
-       hosted_zone_id: "{{ zone_id }}"   # <-- use hosted_zone_id
-       record: "{{ item.item }}.{{ domain_name }}"
-       type: A
-       ttl: 300
-       value: "{{ item.instances[0].public_ip_address }}"
-      loop: "{{ ec2_output.results }}"
+    # - name: create route53 record
+    #   community.aws.route53:
+    #    state: present
+    #    hosted_zone_id: "{{ zone_id }}"   # <-- use hosted_zone_id
+    #    record: "{{ item.item }}.{{ domain_name }}"
+    #    type: A
+    #    ttl: 300
+    #    value: "{{ item.instances[0].public_ip_address }}"
+    #   loop: "{{ ec2_output.results }}"
