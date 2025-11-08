@@ -1,26 +1,29 @@
 - name: create ec2 and r53
-  hosts: local
+  hosts: localhost
   connection: local
+
   vars:
     ami_id: ami-09c813fb71547fc4f
     sg_id: sg-052879cc69a4a54b5
     zone_id: "Z09617511B5QP2P5E3AO"
     domain_name: "madhan66.store"
     instances:
-    - mongodb
+      - mongodb 
 
   tasks:
-  - name: create ec2 instance
-    amazon.aws.ec2_instance:
-       name: "{{ itam }}"
-       instance_type: t3.micro
-       security_group: "{{ sg_id }}"
-       image_id: "{{ ami_id }}"
-       tags:
-         name: "{{ itam }}"
-    loop: "{{ instances }}"
-    register: ec2_output
+     
+    - name: create ec2 instance
+      amazon.aws.ec2_instance:
+        name: "{{ item }}"
+        key_name: roboshop
+        vpc_subnet_id: subnet-xxxxxxx   # replace with your subnet
+        instance_type: t3.micro
+        security_group: "{{ sg_id }}"
+        image_id: "{{ ami_id }}"
+        wait: yes
+      loop: "{{ instances }}"
+      register: ec2_output
 
-  - name: print the ec2_output
-    ansible.builtin.debug:
-      msg: "{{ ec2_output }}"
+    - name: print the ec2_output
+      ansible.builtin.debug:
+        var: ec2_output
