@@ -8,9 +8,10 @@
     zone_id: "Z09617511B5QP2P5E3AO" # replace with your id
     domain_name: "madhan66.store"
     instances:
-      - mongodb
-      - radis
-      - mysql
+      # - mongodb
+      # - radis
+      # - mysql
+      - rabbitmq
 
   tasks:
      
