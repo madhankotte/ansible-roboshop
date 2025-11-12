@@ -3,47 +3,47 @@
   connection: local
 
   vars:
-    ami_id: ami-09c813fb71547fc4f
-    sg_id: sg-052879cc69a4a54b5 # replace with your sg id
-    zone_id: "Z09617511B5QP2P5E3AO" # replace with your id
-    domain_name: "madhan66.store"
-    #  we can pass instance through commend line using -e 
-    # - mongodb
-    # - radis
-    # - mysql
+    ami_id: ami-09c813fb71547fc4f       # Amazon Linux 2 AMI (example)
+    sg_id: sg-052879cc69a4a54b5          # your security group ID
+    zone_id: "Z09617511B5QP2P5E3AO"      # your Route53 hosted zone ID
+    domain_name: "madhan66.store"        # your domain name
+    region: "us-east-1"                  # adjust if needed
+
+    instances:
+      - mongodb
+      - redis
+      - mysql
+
   tasks:
-     
-    - name: create ec2 instance
+
+    - name: create ec2 instance(s)
       amazon.aws.ec2_instance:
         name: "{{ item }}"
         instance_type: t3.micro
         security_group: "{{ sg_id }}"
         image_id: "{{ ami_id }}"
+        region: "{{ region }}"
+        count: 1
         tags:
-          name: "{{ item }}"
+          Name: "{{ item }}"
       loop: "{{ instances }}"
       register: ec2_output
 
-    # - name: print the ec2_output
-    #   ansible.builtin.debug:
-    #     var: ec2_output
+    - name: print instance details
+      ansible.builtin.debug:
+        var: ec2_output
 
-    # - name: print public_ip
-    #   ansible.builtin.debug:
-    #     msg: "{{ item.instances[0].public_ip_address }}"
-    #   loop: "{{ ec2_output.results }}"
-    
-    # - name: print private_ip
-    #   ansible.builtin.debug:
-    #      msg: "{{ item.instances[0].private_ip_address }}"
-    #   loop: "{{ ec2_output.results }}"
+    - name: print public IPs for verification
+      ansible.builtin.debug:
+        msg: "Instance {{ item.item }} => Public IP: {{ item.instances[0].public_ip_address }}"
+      loop: "{{ ec2_output.results }}"
 
-    # - name: create route53 record
-    #   community.aws.route53:
-    #    state: present
-    #    hosted_zone_id: "{{ zone_id }}"   # <-- use hosted_zone_id
-    #    record: "{{ item.item }}.{{ domain_name }}"
-    #    type: A
-    #    ttl: 300
-    #    value: "{{ item.instances[0].public_ip_address }}"
-    #   loop: "{{ ec2_output.results }}"
+    - name: create Route53 A records
+      community.aws.route53:
+        state: present
+        hosted_zone_id: "{{ zone_id }}"
+        record: "{{ item.item }}.{{ domain_name }}"
+        type: A
+        ttl: 300
+        value: "{{ item.instances[0].public_ip_address }}"
+      loop: "{{ ec2_output.results }}"
