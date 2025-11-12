@@ -7,11 +7,11 @@
     sg_id: sg-052879cc69a4a54b5 # replace with your sg id
     zone_id: "Z09617511B5QP2P5E3AO" # replace with your id
     domain_name: "madhan66.store"
-    instances:
-      # - mongodb
-      # - radis
-      # - mysql
-      - rabbitmq
+    #  we can pass instance through commend line using -e 
+    # - mongodb
+    # - radis
+    # - mysql
+    # - rabbitmq
 
   tasks:
      
