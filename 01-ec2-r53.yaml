@@ -11,8 +11,6 @@
     # - mongodb
     # - radis
     # - mysql
-    # - rabbitmq
-
   tasks:
      
     - name: create ec2 instance
